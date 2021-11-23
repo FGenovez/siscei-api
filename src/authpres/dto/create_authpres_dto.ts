@@ -12,7 +12,7 @@ export class Create_Authpres_Dto {
     @ApiProperty({ description: 'CODIGO DE LA COMPAÑIA', type: String, })
     drtCodcia: string;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty({ description: 'CENTRO DE COSTO', type: String, })
     drtCodctc: string;
@@ -22,17 +22,17 @@ export class Create_Authpres_Dto {
     @ApiProperty({ description: 'CODENTI', type: String, })
     drtCodent: string;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     @ApiProperty({ description: 'AÑO REQUERIMIENTO', type: Number, })
     drtAnireq: number;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     @ApiProperty({ description: 'NÚMERO DE REQUERIMIENTO', type: Number, })
     drtCodreq: number;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     @ApiProperty({ description: 'AÑO DE USO DEL PRESUPUESTO', type: Number, })
     drtAniuso: number;
