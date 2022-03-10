@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {  IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 
 export class Create_Authpres_Dto {
@@ -12,7 +11,7 @@ export class Create_Authpres_Dto {
     @ApiProperty({ description: 'CODIGO DE LA COMPAÑIA', type: String, })
     drtCodcia: string;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     @ApiProperty({ description: 'CENTRO DE COSTO', type: String, })
     drtCodctc: string;
@@ -22,17 +21,17 @@ export class Create_Authpres_Dto {
     @ApiProperty({ description: 'CODENTI', type: String, })
     drtCodent: string;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty({ description: 'AÑO REQUERIMIENTO', type: Number, })
     drtAnireq: number;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty({ description: 'NÚMERO DE REQUERIMIENTO', type: Number, })
     drtCodreq: number;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty({ description: 'AÑO DE USO DEL PRESUPUESTO', type: Number, })
     drtAniuso: number;
@@ -80,4 +79,8 @@ export class Create_Authpres_Dto {
     @ApiProperty({ description: 'AUTORIZA PRESUPUESTO SI LO DESCRITO EN REQ ES MAYOR A RSC', type: String, })
     drtValpre: string;
         
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({ description: 'DETALLE DE REQUERIMIENTO', type: Number, })
+    drtCoddre: number;    
 }
