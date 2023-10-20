@@ -10,7 +10,6 @@ import { Unidades } from './entities/unidad.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Cei_Drt_Det_Entity, Cei_Rsc_Entity, Empleados, Unidades])],
   controllers: [AuthpresController],
-  providers: [AuthpresService],
-  exports: [AuthpresService]
+  providers: [AuthpresService]
 })
 export class AuthpresModule {}

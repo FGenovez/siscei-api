@@ -6,8 +6,8 @@ import { Cei_Drt_Det_Entity } from './entities/Cei_Drt_Det_Entity';
 import { Cei_Rsc_Entity } from './entities/cei_rsc_entity';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Empleados } from './entities/empleado.entity';
-import { MESSAGES } from '@nestjs/core/constants';
-
+import * as fs from 'fs';
+const tls = require('tls');
 @Injectable()
 export class AuthpresService {
 
@@ -20,64 +20,65 @@ export class AuthpresService {
     ) { }
 
    
-async actualizaEstado(v_cia, v_ctc, v_ent, v_ani, v_req, v_est, dto: Edit_Authpres_Dto) {
-    try {
+async actualizaEstado(v_cia:string, v_ctc:string, v_ent:string, v_ani:number, v_req:number, v_est:string, 
+    dto: Edit_Authpres_Dto) : Promise<Cei_Drt_Det_Entity[]> {
         const toUpdate = await this.consultaDatos(v_cia, v_ctc, v_ent, v_ani, v_req);
+        //console.log(toUpdate);
         if (!toUpdate)
             throw new HttpException('NO SE PUEDE ACTUALIZAR - No existe el registro', HttpStatus.FORBIDDEN);
         toUpdate.forEach(Cei_Drt => {
-            const modelToEdit = Object.assign(Cei_Drt, {drtValpre: v_est });
-            this.ceiDrtEntityRepository.save(modelToEdit);
+        //console.log(Cei_Drt);
+         const modelToEdit = Object.assign(Cei_Drt, {drtValpre: v_est});
+         this.ceiDrtEntityRepository.save(modelToEdit);
         });
-            const analista = await this.findAnalista(v_cia, v_ctc, v_ent, v_ani, v_req);
-            if (!analista) { 
-                return [];
+               
+        const analista = await this.findAnalista(v_cia, v_ctc, v_ent, v_ani, v_req);
+        //console.log(analista);
+        if (!analista) { 
+            return;
+        }
+        else {
+            const datosEmp = await this.findOneEmp(analista.rscCodempEla);
+            if (!datosEmp) {
+                return;
             }
             else {
-                const datosEmp = await this.findOneEmp(analista.rscCodempEla);
-                if (!datosEmp) {
-                    return [];
-                }
-                else {const enviaCorreo = await this.sendMail(datosEmp.correo, datosEmp.nombre, v_req, v_ani, v_ent);}
-            }        
-        } catch (error) {
-            console.log(error)
-     }
+                //datosEmp.correo ='fgenovez';
+                const enviaCorreo = await this.sendMail(datosEmp.correo, datosEmp.nombre, v_req, v_ani, v_ent);}
+        }    
+         return toUpdate;  
    }
 
-    async consultaDatos(v_cia, v_ctc, v_ent, v_ani, v_req) {
-        try {
+    async consultaDatos(v_cia: string, v_ctc: string, v_ent:string, v_ani:number, v_req:number) {
             const register = await this.ceiDrtEntityRepository
             .createQueryBuilder('drt')
-            .where('drt.DRT_CODCIA = :cia',  { cia:  v_cia })  
+               .where('drt.DRT_CODCIA = :cia',  { cia:  v_cia })  
             .andWhere('drt.DRT_CODCTC = :ctc',  { ctc:  v_ctc })  
             .andWhere('drt.DRT_CODENT = :ent',  { ent:  v_ent })  
             .andWhere('drt.DRT_ANIREQ = :ani',  { ani:  v_ani })  
             .andWhere('drt.DRT_CODREQ = :req',  { req:  v_req })  
             .getMany();      
-            if (register !== null && register !== undefined) {return register;}             
-        } catch (error) {
-            console.log(error);
+            return register;
         }
-
-}
     
-    async findAnalista(cia, ctc, ent, ani, req) {
+    async findAnalista(v_cia: string, v_ctc: string, v_ent:string, v_ani:number, v_req:number) {
         try {
             const register = await this.ceiRscEntityRepository.findOne({
-                rscCodcia: cia,
-                rscCodctc: ctc,
-                rscCodent: ent,
-                rscReqAnio: ani,
-                rscReqId: req
+                rscCodcia: v_cia,
+                rscCodctc: v_ctc,
+                rscCodent: v_ent,
+                rscReqAnio: v_ani,
+                rscReqId: v_req
             });
-            if (register !== null && register !== undefined) {return register;}
+            if (register !== null && register !== undefined) {
+                return register;
+            }
         } catch (error) {
             console.log(error);
         }
-
     }
-    async findOneEmp(codcel) {
+
+    async findOneEmp(codcel:string) {
         try {
             const register = await this.empRepository.findOne({ codcia: '001', codcel: codcel }).then();
             if (register !== null && register !== undefined) {
@@ -88,22 +89,23 @@ async actualizaEstado(v_cia, v_ctc, v_ent, v_ani, v_req, v_est, dto: Edit_Authpr
         }
 
 }
-async sendMail(email, nombreEmpleado, req, ani, ent) {
+async sendMail(email:string, nombreEmpleado:string, v_req:number, v_ani:number, v_ent:string) {
     try {
         const asuntoCorreo = 'El Área de Presupuesto ha Aprobado el refuerzo presupuestario del requerimiento descrito en el asunto';
         const despedida = '¡Feliz día!';
         await this.mailerService
             .sendMail({
             to: email ? email + '@cel.gob.sv' : process.env.correoApoyo,
-            from: 'SisCEI@cel.gob.sv',
-            subject: 'Notificación sobre Solicitud de refuerzo presupuestario REQ: ' + req + '-' + ani + ', CODENTI: ' + ent + ' ✔',
+            //to: 'fredy.genovez.cel' ? 'fredy.genovez.cel' + '@gmail.com' : process.env.correoApoyo,
+            from: 'SisCEI sistemas@cel.gob.sv',
+            subject: 'Notificación sobre Solicitud de refuerzo presupuestario REQ: ' + v_req + '-' + v_ani + ', CODENTI: ' + v_ent + ' ✔',
             text: 'Bienvenido',
             template: 'encuesta',
             context: {
                 nombreEmpleado: nombreEmpleado,
                 asunto: asuntoCorreo,
                 nombreEmpleadoSaludo: nombreEmpleado.toUpperCase(),
-                despedida: despedida
+                despedida: despedida,
             },
         })
             .then(() => { console.log('Correo Enviado a: ',email, nombreEmpleado); })

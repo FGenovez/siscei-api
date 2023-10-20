@@ -17,17 +17,18 @@ import { Cei_Rsc_Entity } from './authpres/entities/cei_rsc_entity';
   imports: [
     ConfigModule.forRoot(),
     AuthpresModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),   // <-- path to the static files
-    }),    
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'client'),   // <-- path to the static files
+    // }),    
   TypeOrmModule.forRoot({
     type: 'oracle',
-    connectString: '192.168.1.9:1521/obelix',
+    connectString: '192.168.1.14:1521/FINANC',
     port: 1521,
     username: 'WSISCEI',
     password: '4pl1c4c10n3sw3b',
-    database: 'desa',
+    database: 'FINANC',
     schema: '',
+    logging: true,
     entities: [Cei_Drt_Det_Entity, Empleados, Unidades, Cei_Rsc_Entity],
   }),
   MailerModule.forRootAsync({
@@ -35,7 +36,8 @@ import { Cei_Rsc_Entity } from './authpres/entities/cei_rsc_entity';
       transport: {
         host: process.env.HOST_MAIL,
         port: parseInt(process.env.PORT_MAIL),
-        secure: Boolean(JSON.parse(process.env.SECURE_MAIL)),
+        secure: false,
+        tls: { rejectUnauthorized: false },
       },
       defaults: {
         from: '"nest-modules" <modules@nestjs.com>',
@@ -57,6 +59,7 @@ import { Cei_Rsc_Entity } from './authpres/entities/cei_rsc_entity';
       },
     }),
   }),
+  
   AuthpresModule
 ],
   controllers: [AppController],

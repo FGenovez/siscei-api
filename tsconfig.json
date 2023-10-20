@@ -8,8 +8,16 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "build": "npm run copy-assets && tsc -p tsconfig.build.json",
+    "copy-assets": "cp -rv src/assets/i18n dist/assets/",
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false    
   }
 }

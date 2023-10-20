@@ -1,18 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller,  Get,  Param } from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AuthpresService } from './authpres.service';
 import { Edit_Authpres_Dto } from './dto/edit_authpres_dto';
+
 @ApiTags('authpres')
 @Controller('authpres')
 export class AuthpresController {
     constructor(private authpresService: AuthpresService) {}
   
     @ApiHeader({
-        name: 'Controlador: @Put(/actualizar/:cia/:ctc/:ent/:ani/:req/:est)'||
-             '- Proceso que es ejecutado desde SisCEI.Cei_Su_Informa_compram_Pr',
+        name: 'Controlador: @Get(/actualizar/:cia/:ctc/:ent/:ani/:req/:est)'||
+             '- Proceso que es ejecutado desde SisCEI.Cei_Su_Informa_compram_Pr. Debe ser un @GEt',
         description: 'Actualiza registro',
     })
-    @Put('/actualizar/:cia/:ctc/:ent/:ani/:req/:est')
+    @Get('/actualizar/:cia/:ctc/:ent/:ani/:req/:est')
     async modificaUsuario(
         @Param('cia') v_cia: string,
         @Param('ctc') v_ctc: string,
