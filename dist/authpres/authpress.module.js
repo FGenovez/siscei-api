@@ -15,11 +15,12 @@ const Cei_Drt_Det_Entity_1 = require("./entities/Cei_Drt_Det_Entity");
 const cei_rsc_entity_1 = require("./entities/cei_rsc_entity");
 const empleado_entity_1 = require("./entities/empleado.entity");
 const unidad_entity_1 = require("./entities/unidad.entity");
+const cei_rtb_entity_1 = require("./entities/cei_rtb_entity");
 let AuthpresModule = class AuthpresModule {
 };
 AuthpresModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([Cei_Drt_Det_Entity_1.Cei_Drt_Det_Entity, cei_rsc_entity_1.Cei_Rsc_Entity, empleado_entity_1.Empleados, unidad_entity_1.Unidades])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([Cei_Drt_Det_Entity_1.Cei_Drt_Det_Entity, cei_rsc_entity_1.Cei_Rsc_Entity, empleado_entity_1.Empleados, unidad_entity_1.Unidades, cei_rtb_entity_1.Cei_Rtb_Entity])],
         controllers: [authpres_controller_1.AuthpresController],
         providers: [authpres_service_1.AuthpresService]
     })

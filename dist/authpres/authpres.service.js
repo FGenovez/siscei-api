@@ -20,12 +20,14 @@ const Cei_Drt_Det_Entity_1 = require("./entities/Cei_Drt_Det_Entity");
 const cei_rsc_entity_1 = require("./entities/cei_rsc_entity");
 const mailer_1 = require("@nestjs-modules/mailer");
 const empleado_entity_1 = require("./entities/empleado.entity");
+const cei_rtb_entity_1 = require("./entities/cei_rtb_entity");
 const tls = require('tls');
 let AuthpresService = class AuthpresService {
-    constructor(ceiDrtEntityRepository, ceiRscEntityRepository, empRepository, mailerService) {
+    constructor(ceiDrtEntityRepository, ceiRscEntityRepository, empRepository, ceirtbRepository, mailerService) {
         this.ceiDrtEntityRepository = ceiDrtEntityRepository;
         this.ceiRscEntityRepository = ceiRscEntityRepository;
         this.empRepository = empRepository;
+        this.ceirtbRepository = ceirtbRepository;
         this.mailerService = mailerService;
     }
     async actualizaEstado(v_cia, v_ctc, v_ent, v_ani, v_req, v_est, dto) {
@@ -115,13 +117,111 @@ let AuthpresService = class AuthpresService {
             console.log(error);
         }
     }
+    async autsolpresbcu(v_cia, v_ani, v_ent, v_cod, v_est, dto) {
+        const toUpdate = await this.ceirtbRepository.findOne({
+            where: {
+                rtbCodcia: v_cia,
+                rtbAnio: v_ani,
+                rtbCodent: v_ent,
+                rtbCodigo: v_cod,
+                rtbEstado: 'ENV'
+            }
+        });
+        console.log(toUpdate);
+        if (!toUpdate)
+            throw new common_1.HttpException('NO SE PUEDE ACTUALIZAR ya que la Solictud debe tener el estado ENVIADA', common_1.HttpStatus.FORBIDDEN);
+        const modelToEdit = Object.assign(toUpdate, { rtbEstado: v_est });
+        this.ceirtbRepository.save(modelToEdit);
+        const analista = await this.findEmisorRtb(v_cia, v_ani, v_ent, v_cod);
+        if (!analista) {
+            return;
+        }
+        else {
+            const datosEmp = await this.findOneEmp(analista.rtbCodempEmi);
+            if (!datosEmp) {
+                return;
+            }
+            else {
+                const enviaCorreo = await this.sendMailRTB(datosEmp.correo, datosEmp.nombre, v_ani, v_ent, v_cod, toUpdate.rtbMonto, toUpdate.rtbCodentEnt, v_est);
+            }
+        }
+        return toUpdate;
+    }
+    async findEmisorRtb(v_cia, v_ani, v_ent, v_cod) {
+        try {
+            const register = await this.ceirtbRepository.findOne({
+                rtbCodcia: v_cia,
+                rtbAnio: v_ani,
+                rtbCodent: v_ent,
+                rtbCodigo: v_cod,
+            });
+            if (register !== null && register !== undefined) {
+                return register;
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    async sendMailRTB(email, nombreEmpleado, v_ani, v_ent, v_cod, v_monto, v_entent, v_est) {
+        try {
+            let estado = "A";
+            if (v_est === "AUT") {
+                estado = "AUTORIZADO";
+            }
+            else {
+                estado = "ANULADO";
+            }
+            const formatCurrency = (value, locale = 'es-MX', currency = 'MXN') => {
+                return new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currency,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }).format(value);
+            };
+            let asuntoCorreo = '';
+            if (v_est === "AUT") {
+                asuntoCorreo = 'El Codenti ' + v_entent + ' ha ' + estado + ' su solicitud de refuerzo presupuestario de baja Cuantía Número ' + v_cod.toString() + ' por un monto de ' + formatCurrency(v_monto, 'en-US', 'USD').toString()
+                    + '. A partir de este momento ya puede disponer de los fondos para la emisión de requerimientos de Baja Cuantía!';
+            }
+            else if (v_est === "ANU") {
+                asuntoCorreo = 'El Codenti ' + v_entent + ' ha ' + estado + ' su solicitud de refuerzo presupuestario de baja Cuantía Número ' + v_cod.toString() + ' por un monto de ' + formatCurrency(v_monto, 'en-US', 'USD').toString();
+            }
+            else {
+                asuntoCorreo = '';
+            }
+            const despedida = '¡Feliz día!';
+            await this.mailerService
+                .sendMail({
+                to: email ? email + '@cel.gob.sv' : process.env.correoApoyo,
+                from: 'SisCEI SisCEI@cel.gob.sv',
+                subject: 'Notificación sobre Solicitud de refuerzo presupuestario de Baja Cuantía Número : ' + v_cod + ' ✔',
+                text: 'Bienvenido',
+                template: 'encuesta',
+                context: {
+                    nombreEmpleado: nombreEmpleado,
+                    asunto: asuntoCorreo,
+                    nombreEmpleadoSaludo: nombreEmpleado.toUpperCase(),
+                    despedida: despedida,
+                },
+            })
+                .then(() => { console.log('Correo Enviado a: ', email, nombreEmpleado); })
+                .catch((error) => { console.log(error); });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 };
 AuthpresService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Cei_Drt_Det_Entity_1.Cei_Drt_Det_Entity)),
     __param(1, (0, typeorm_1.InjectRepository)(cei_rsc_entity_1.Cei_Rsc_Entity)),
     __param(2, (0, typeorm_1.InjectRepository)(empleado_entity_1.Empleados)),
+    __param(3, (0, typeorm_1.InjectRepository)(cei_rtb_entity_1.Cei_Rtb_Entity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         mailer_1.MailerService])

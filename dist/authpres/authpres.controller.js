@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const authpres_service_1 = require("./authpres.service");
 const edit_authpres_dto_1 = require("./dto/edit_authpres_dto");
+const edit_cei_rtb_dto_1 = require("./dto/edit_cei_rtb_dto");
 let AuthpresController = class AuthpresController {
     constructor(authpresService) {
         this.authpresService = authpresService;
@@ -24,6 +25,11 @@ let AuthpresController = class AuthpresController {
     async modificaUsuario(v_cia, v_ctc, v_ent, v_ani, v_req, v_est, dto) {
         const data = await this.authpresService.actualizaEstado(v_cia, v_ctc, v_ent, v_ani, v_req, v_est, dto);
         return { message: 'La disponibilidad Presupuestaria : ' + v_req + ' / ' + v_ani + ' - Codenti: ' + v_ent + ' ha sido actualizada' };
+    }
+    async autsolpresbcu(v_cia, v_ani, v_ent, v_cod, v_est, dto) {
+        const data = await this.authpresService.autsolpresbcu(v_cia, v_ani, v_ent, v_cod, v_est, dto);
+        const message = `La solicitud: ${v_cod} / ${v_ani} - Codenti: ${v_ent} ha sido procesada`;
+        return (JSON.stringify(message));
     }
 };
 __decorate([
@@ -44,6 +50,18 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, Number, Number, String, edit_authpres_dto_1.Edit_Authpres_Dto]),
     __metadata("design:returntype", Promise)
 ], AuthpresController.prototype, "modificaUsuario", null);
+__decorate([
+    (0, common_1.Get)('/autsolpresbcu/:cia/:ani/:ent/:cod/:est'),
+    __param(0, (0, common_1.Param)('cia')),
+    __param(1, (0, common_1.Param)('ani')),
+    __param(2, (0, common_1.Param)('ent')),
+    __param(3, (0, common_1.Param)('cod')),
+    __param(4, (0, common_1.Param)('est')),
+    __param(5, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, String, Number, String, edit_cei_rtb_dto_1.Edit_Cei_Rtb_Dto]),
+    __metadata("design:returntype", Promise)
+], AuthpresController.prototype, "autsolpresbcu", null);
 AuthpresController = __decorate([
     (0, swagger_1.ApiTags)('authpres'),
     (0, common_1.Controller)('authpres'),

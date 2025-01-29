@@ -19,6 +19,7 @@ const Cei_Drt_Det_Entity_1 = require("./authpres/entities/Cei_Drt_Det_Entity");
 const empleado_entity_1 = require("./authpres/entities/empleado.entity");
 const unidad_entity_1 = require("./authpres/entities/unidad.entity");
 const cei_rsc_entity_1 = require("./authpres/entities/cei_rsc_entity");
+const cei_rtb_entity_1 = require("./authpres/entities/cei_rtb_entity");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -28,14 +29,13 @@ AppModule = __decorate([
             authpress_module_1.AuthpresModule,
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'oracle',
-                connectString: '192.168.1.14:1521/FINANC',
-                port: 1521,
-                username: 'WSISCEI',
-                password: '4pl1c4c10n3sw3b',
-                database: 'FINANC',
-                schema: '',
-                logging: true,
-                entities: [Cei_Drt_Det_Entity_1.Cei_Drt_Det_Entity, empleado_entity_1.Empleados, unidad_entity_1.Unidades, cei_rsc_entity_1.Cei_Rsc_Entity],
+                connectString: process.env.ORA_CONECTION,
+                port: parseInt(process.env.ORA_PORT),
+                username: process.env.ORA_USERNAME,
+                password: process.env.ORA_PASSWORD,
+                database: process.env.ORA_DATABASE,
+                schema: "",
+                entities: [Cei_Drt_Det_Entity_1.Cei_Drt_Det_Entity, empleado_entity_1.Empleados, unidad_entity_1.Unidades, cei_rsc_entity_1.Cei_Rsc_Entity, cei_rtb_entity_1.Cei_Rtb_Entity],
             }),
             mailer_1.MailerModule.forRootAsync({
                 useFactory: () => ({

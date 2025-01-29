@@ -17,6 +17,4 @@ export class Cei_Rsc_Entity {
   rscId: number;
   @Column("varchar2",{ name: 'RSC_CODEMP_ELA',  length: 7 })
   rscCodempEla: string;
-
-
 }

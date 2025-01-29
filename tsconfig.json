@@ -10,8 +10,6 @@
     "sourceMap": true,
     "baseUrl": "./",
     "incremental": true,
-    "build": "npm run copy-assets && tsc -p tsconfig.build.json",
-    "copy-assets": "cp -rv src/assets/i18n dist/assets/",
     "outDir": "./dist",
     "skipLibCheck": true,
     "strictNullChecks": false,

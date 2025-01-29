@@ -12,6 +12,7 @@ import { Cei_Drt_Det_Entity } from './authpres/entities/Cei_Drt_Det_Entity';
 import { Empleados } from './authpres/entities/empleado.entity';
 import { Unidades } from './authpres/entities/unidad.entity';
 import { Cei_Rsc_Entity } from './authpres/entities/cei_rsc_entity';
+import { Cei_Rtb_Entity } from './authpres/entities/cei_rtb_entity';
 
 @Module({
   imports: [
@@ -22,14 +23,13 @@ import { Cei_Rsc_Entity } from './authpres/entities/cei_rsc_entity';
     // }),    
   TypeOrmModule.forRoot({
     type: 'oracle',
-    connectString: '192.168.1.14:1521/FINANC',
-    port: 1521,
-    username: 'WSISCEI',
-    password: '4pl1c4c10n3sw3b',
-    database: 'FINANC',
-    schema: '',
-    logging: true,
-    entities: [Cei_Drt_Det_Entity, Empleados, Unidades, Cei_Rsc_Entity],
+    connectString: process.env.ORA_CONECTION,//'192.168.1.14:1521/FINANC',
+    port: parseInt(process.env.ORA_PORT), //1521,
+    username: process.env.ORA_USERNAME,
+    password: process.env.ORA_PASSWORD,
+    database: process.env.ORA_DATABASE,
+    schema: "",
+    entities: [Cei_Drt_Det_Entity, Empleados, Unidades, Cei_Rsc_Entity,Cei_Rtb_Entity],
   }),
   MailerModule.forRootAsync({
     useFactory: () => ({
