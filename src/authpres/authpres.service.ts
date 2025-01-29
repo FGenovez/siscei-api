@@ -21,7 +21,6 @@ export class AuthpresService {
         private readonly mailerService: MailerService,        
         
     ) { }
-
    
 async actualizaEstado(v_cia:string, v_ctc:string, v_ent:string, v_ani:number, v_req:number, v_est:string, 
     dto: Edit_Authpres_Dto) : Promise<Cei_Drt_Det_Entity[]> {
