@@ -27,7 +27,6 @@ export class AuthpresController {
          const data = await this.authpresService.actualizaEstado(v_cia, v_ctc, v_ent, v_ani, v_req,  v_est, dto);
         return { message: 'La disponibilidad Presupuestaria : '+ v_req +' / '+ v_ani +' - Codenti: '+ v_ent +' ha sido actualizada'};
     }
-
     
     @Get('/autsolpresbcu/:cia/:ani/:ent/:cod/:est')
     async autsolpresbcu(
