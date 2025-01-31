@@ -28,6 +28,7 @@ export class AuthpresController {
         return { message: 'La disponibilidad Presupuestaria : '+ v_req +' / '+ v_ani +' - Codenti: '+ v_ent +' ha sido actualizada'};
     }
 
+    
     @Get('/autsolpresbcu/:cia/:ani/:ent/:cod/:est')
     async autsolpresbcu(
         @Param('cia') v_cia: string,
